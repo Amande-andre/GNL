@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/06/28 07:32:11 by anmande          ###   ########.fr       */
+/*   Updated: 2022/06/28 07:46:03 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,10 @@ char	*get_next_line(int fd)
 	char		buff[BUFFER_SIZE + 1];
 	static char	*rest;
 	char		*line;
-	int			read_return;
+	static int			read_return;
 
+	if (read_return != 0)
+		ft_putstr(rest);
 	rest = NULL;
 	while (1)
 	{
@@ -114,10 +116,12 @@ char	*get_next_line(int fd)
 		}
 		if (buff[i] == '\n')
 		{
-			write(1, "\n", 1);
+			//write(1, "\n", 1);
 			rest = buff + i;
 			return (rest);
 		}
+		else
+			(rest = NULL);
 	}
 	return (rest);
 }
