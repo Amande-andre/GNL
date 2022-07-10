@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/06/28 07:46:03 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/10 16:44:00 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 size_t	ft_strlen(char * buff);
-char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*get_next_line(int fd);
-char	*ft_strchr(char *s, int c);
+char	*ft_strjoin(char *s1, char *s2);
+void	*ft_memcpy(void *dest, void *src, size_t n);
+char	*ft_substr(char *s, unsigned int start, size_t len);
 
+void	*ft_memcpy(void *dest, void *src, size_t n)
+{
+	size_t	i;
+	char	*s;
+	char	*d;
+
+	i = 0;
+	s = (void *)src;
+	d = dest;
+	if (dest == NULL)
+		return (NULL);
+	while (i < n && src)
+	{
+		d[i] = s[i];
+		i++;
+	}
+	return (dest);
+}
 
 size_t	ft_strlen(char *buff)
 {
@@ -32,22 +50,23 @@ size_t	ft_strlen(char *buff)
 	return(i);
 }
 
-char	*ft_strchr(char *s, int c)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	int		i;
+	char	*s;
+	size_t	lens1;
+	size_t	lens2;
 
-	i = 0;
-	if (c > 256)
-		c %= 256;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return ((char *)s + i);
-		i++;
-	}
-	if (s[i] == c && c == '\0')
-		return ((char *)s + i);
-	return (NULL);
+	if (!s1)
+		return (NULL);
+	lens1 = ft_strlen(s1);
+	lens2 = ft_strlen(s2);
+	s = malloc(sizeof(char) * (lens1 + lens2) + 1);
+	if (!s)
+		return (NULL);
+	ft_memcpy(s, s1, lens1);
+	ft_memcpy(s + lens1, s2, lens2);
+	s[ft_strlen(s)] = '\0';
+	return (s);
 }
 
 char	*ft_substr(char *s, unsigned int start, size_t len)
@@ -75,31 +94,16 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	return (str);
 }
 
-void	ft_putstr(char *buff)
-{
-	size_t	i;
-
-	i = 0;
-	while (buff[i])
-	{
-		//codition recursif si = \n pour recommencer le process
-		if (buff == NULL || buff[0] == '\0')
-			return;
-		write(1, &buff[i], 1);
-		i++;
-	}
-}
-
 char	*get_next_line(int fd)
 {
-	int			i;
-	char		buff[BUFFER_SIZE + 1];
-	static char	*rest;
-	char		*line;
+	int					i;
+	char				buff[BUFFER_SIZE + 1];
+	static char			*rest;
+	char				*line;
 	static int			read_return;
 
-	if (read_return != 0)
-		ft_putstr(rest);
+	if (read_return)
+		line = ft_strjoin(line, rest);
 	rest = NULL;
 	while (1)
 	{
@@ -108,33 +112,32 @@ char	*get_next_line(int fd)
 		if (read_return == 0)
 			break;
 		buff[BUFFER_SIZE] = '\0';
-		//printf("%s", buff);
+		// printf("%s", buff);
 		while (buff[i] && buff[i] != '\n')
 		{
-			write(1, &buff[i], 1);
 			i++;
 		}
+		line = ft_strjoin(line, ft_substr(buff, 1, i - 1));
 		if (buff[i] == '\n')
 		{
-			//write(1, "\n", 1);
 			rest = buff + i;
-			return (rest);
+			return (line);
 		}
 		else
 			(rest = NULL);
 	}
-	return (rest);
+	return (line);
 }
 
 int	main(int ac, char **av)
 {
 	(void)ac;
 	int i = atoi(av[1]);
-	int fd = open("a_lire", O_RDONLY);
-	while (i > 0 )
+	int fd = open("test", O_RDONLY);
+	while (i-- > 0 )
 	{
-		get_next_line(fd);
-		i--;
+		printf("%s", get_next_line(fd));
+		//i--;
 	}
 	
 	//printf("\n%d", fd);
