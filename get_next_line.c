@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/19 04:41:40 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/19 18:13:04 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,28 +58,35 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 char	*get_next_line(int fd)
 {
-	int					i;
-	char				buff[BUFFER_SIZE + 1];
-	char				*line;
-
-	line = NULL;
+	int			i;
+	char		buff[BUFFER_SIZE + 1];
+	struct		s_data t_data;
+	
+	t_data.line = NULL;
 	while (read(fd, buff, BUFFER_SIZE) > 0)
 	{
 		i = 0;
-		if (line == NULL)
-			line = buff;
+		if (t_data.line == NULL)
+		{
+			if (t_data.line == NULL)
+				t_data.line = buff;
+			else
+			{
+				t_data.line = t_data.rest;
+				t_data.rest = NULL;
+			}	
+		}	
 		buff[BUFFER_SIZE + 1] = '\0';
 		while (buff[i] && buff[i] != '\n')
-		{
 			i++;
-		}		
-		line = ft_strjoin(line, ft_substr(buff, 1, i));
+		if (i != BUFFER_SIZE)
+		t_data.line = ft_strjoin(t_data.line, ft_substr(buff, 1, i));
 		if (buff[i] == '\n')
 		{
-			return (line);
+			return (t_data.line);
 		}
 	}
-	return (line);
+	return (t_data.line);
 }
 
 int	main(int ac, char **av)

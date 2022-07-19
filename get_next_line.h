@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 18:08:52 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/19 01:40:05 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/19 18:11:45 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stddef.h>
+
+typedef struct s_data
+{
+	char	*rest;
+	char	*line;
+}	t_data;
 
 size_t	ft_strlen(const char *s);
 char	*get_next_line(int fd);
