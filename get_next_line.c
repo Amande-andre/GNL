@@ -6,11 +6,29 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/19 18:13:04 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/19 19:13:38 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char	*ft_strchr(const char *s, int c)
+{
+	int		i;
+
+	i = 0;
+	if (c > 256)
+		c %= 256;
+	while (s[i])
+	{
+		if (s[i] == c)
+			return ((char *)s + i);
+		i++;
+	}
+	if (s[i] == c && c == '\0')
+		return ((char *)s + i);
+	return (NULL);
+}
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -79,7 +97,8 @@ char	*get_next_line(int fd)
 		buff[BUFFER_SIZE + 1] = '\0';
 		while (buff[i] && buff[i] != '\n')
 			i++;
-		if (i != BUFFER_SIZE)
+		t_data.rest = ft_strchr(buff, '\n');
+		ft_memcpy(t_data.rest, t_data.rest, BUFFER_SIZE - i);
 		t_data.line = ft_strjoin(t_data.line, ft_substr(buff, 1, i));
 		if (buff[i] == '\n')
 		{
