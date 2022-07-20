@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/19 19:13:38 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/20 19:26:17 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,30 +77,29 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 char	*get_next_line(int fd)
 {
 	int			i;
-	char		buff[BUFFER_SIZE + 1];
 	struct		s_data t_data;
 	
 	t_data.line = NULL;
-	while (read(fd, buff, BUFFER_SIZE) > 0)
+	while (read(fd, t_data.buff, BUFFER_SIZE) != 0)
 	{
+		t_data.buff[BUFFER_SIZE + 1] = '\0';
 		i = 0;
-		if (t_data.line == NULL)
+		while (t_data.buff[i] && t_data.buff[i] != '\n')
+			i++;
+		if (t_data.rest != NULL)
+		{
+			ft_strjoin(t_data.line, t_data.rest);
+			t_data.rest = NULL;
+		}
+		else
 		{
 			if (t_data.line == NULL)
-				t_data.line = buff;
+				t_data.line = ft_memcpy(t_data.buff, t_data.buff, BUFFER_SIZE + 1);
 			else
-			{
-				t_data.line = t_data.rest;
-				t_data.rest = NULL;
-			}	
-		}	
-		buff[BUFFER_SIZE + 1] = '\0';
-		while (buff[i] && buff[i] != '\n')
-			i++;
-		t_data.rest = ft_strchr(buff, '\n');
-		ft_memcpy(t_data.rest, t_data.rest, BUFFER_SIZE - i);
-		t_data.line = ft_strjoin(t_data.line, ft_substr(buff, 1, i));
-		if (buff[i] == '\n')
+				t_data.line = ft_strjoin(t_data.line, ft_substr(t_data.buff, 0, i));
+		}
+		t_data.rest = ft_strchr(t_data.buff, '\n');
+		if (t_data.buff[i] == '\n')
 		{
 			return (t_data.line);
 		}
@@ -113,7 +112,7 @@ int	main(int ac, char **av)
 	(void)ac;
 	int i = atoi(av[1]);
 	int fd = open("a_lire", O_RDONLY);
-	while (i-- > 0 )
+	while (--i > 0 )
 	{
 		printf("%s", get_next_line(fd));
 		//i--;

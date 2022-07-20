@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 18:08:52 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/19 19:08:23 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/20 19:21:54 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@
 
 typedef struct s_data
 {
+	char	buff[BUFFER_SIZE + 1];
 	char	*rest;
 	char	*line;
+
 }	t_data;
 
 size_t	ft_strlen(const char *s);
