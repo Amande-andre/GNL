@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/20 19:26:17 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/22 06:16:55 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,35 +76,38 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 char	*get_next_line(int fd)
 {
-	int			i;
-	struct		s_data t_data;
+	int				i;
+	struct			s_data t_data;
+	static	char 	*rest = NULL;
 	
 	t_data.line = NULL;
-	while (read(fd, t_data.buff, BUFFER_SIZE) != 0)
+	while (1)
 	{
-		t_data.buff[BUFFER_SIZE + 1] = '\0';
+		t_data.read_return = read(fd, t_data.buff, BUFFER_SIZE);
+		t_data.buff[t_data.read_return] = '\0';
 		i = 0;
 		while (t_data.buff[i] && t_data.buff[i] != '\n')
 			i++;
-		if (t_data.rest != NULL)
+		if (rest != NULL)
 		{
-			ft_strjoin(t_data.line, t_data.rest);
-			t_data.rest = NULL;
+			t_data.line = ft_strdup(rest);
+			rest = NULL;
 		}
+		if (t_data.line == NULL)
+			t_data.line = ft_strdup(t_data.buff);
 		else
 		{
-			if (t_data.line == NULL)
-				t_data.line = ft_memcpy(t_data.buff, t_data.buff, BUFFER_SIZE + 1);
-			else
-				t_data.line = ft_strjoin(t_data.line, ft_substr(t_data.buff, 0, i));
+			t_data.line = ft_strjoin(t_data.line, ft_substr(t_data.buff, 0, i + 1));
 		}
-		t_data.rest = ft_strchr(t_data.buff, '\n');
 		if (t_data.buff[i] == '\n')
 		{
+			rest = ft_strdup(ft_strchr(t_data.buff, '\n'));
+			//rest = NULL;
+			//free(rest);
 			return (t_data.line);
 		}
 	}
-	return (t_data.line);
+	return (NULL);
 }
 
 int	main(int ac, char **av)
@@ -112,10 +115,13 @@ int	main(int ac, char **av)
 	(void)ac;
 	int i = atoi(av[1]);
 	int fd = open("a_lire", O_RDONLY);
-	while (--i > 0 )
+	char *fini;
+	while (i > 0 )
 	{
-		printf("%s", get_next_line(fd));
-		//i--;
+		fini = get_next_line(fd);
+		printf("1%s", fini);
+		free(fini);
+		i--;
 	}
 	
 	//printf("\n%d", fd);
