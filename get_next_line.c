@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
+/*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/22 06:16:55 by anmande          ###   ########.fr       */
+/*   Updated: 2022/07/23 14:30:39 by admin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char	*get_next_line(int fd)
 			t_data.line = ft_strdup(t_data.buff);
 		else
 		{
-			t_data.line = ft_strjoin(t_data.line, ft_substr(t_data.buff, 0, i + 1));
+			t_data.line = ft_strjoin(t_data.line, ft_substr(t_data.buff, 0, i));
 		}
 		if (t_data.buff[i] == '\n')
 		{
@@ -119,7 +119,7 @@ int	main(int ac, char **av)
 	while (i > 0 )
 	{
 		fini = get_next_line(fd);
-		printf("1%s", fini);
+		printf("%s", fini);
 		free(fini);
 		i--;
 	}
