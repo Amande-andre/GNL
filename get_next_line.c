@@ -6,7 +6,7 @@
 /*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/23 14:30:39 by admin            ###   ########.fr       */
+/*   Updated: 2022/07/23 14:55:23 by admin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ char	*get_next_line(int fd)
 	static	char 	*rest = NULL;
 	
 	t_data.line = NULL;
-	while (1)
+	t_data.read_return = 1;
+	while (t_data.read_return != 0)
 	{
 		t_data.read_return = read(fd, t_data.buff, BUFFER_SIZE);
 		t_data.buff[t_data.read_return] = '\0';
