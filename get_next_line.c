@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/08/02 05:11:47 by anmande          ###   ########.fr       */
+/*   Updated: 2022/08/02 05:46:53 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,29 +82,28 @@ char	*get_next_line(int fd)
 	
 	t_data.line = NULL;
 	//t_data.tmp = NULL;
-	t_data.read_return = 1;
+	t_data.read_return = BUFFER_SIZE;
 	i = 0;
 	buff = malloc(BUFFER_SIZE + 1);
-	while (t_data.read_return != 0)
+	while (t_data.read_return == BUFFER_SIZE)
 	{
-		t_data.line = ft_strjoin(t_data.line, buff);
 		if (buff[0] == 0)
 		{
 			t_data.read_return = read(fd, buff, BUFFER_SIZE);
 			buff[t_data.read_return] = '\0';
 		}
-		else
-		{
-			t_data.line = ft_strdup(buff);
-			buff[0] = 0;
-		}
 		while (buff[i] != '\0' && buff[i] != '\n')
 			i++;
+		if (buff)
+		{
+			t_data.tmp = ft_substr(buff, 0, i);
+			t_data.line = ft_strjoin(t_data.line, buff);
+			buff[0] = 0;
+		}
 		if (t_data.line == NULL)
 		{
 			t_data.line = ft_substr(buff, 0, i);
 		}
-		i = 0;
 		//ft_memset(buff, '\0', i);
 		//buff = ft_strdup(ft_strchr(buff, '\n'));
 		//rest = ft_strdup(ft_substr(buff, i + 1, BUFFER_SIZE - i));
