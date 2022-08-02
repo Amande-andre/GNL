@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/23 14:55:23 by admin            ###   ########.fr       */
+/*   Updated: 2022/08/02 05:11:47 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,37 +78,38 @@ char	*get_next_line(int fd)
 {
 	int				i;
 	struct			s_data t_data;
-	static	char 	*rest = NULL;
+	static	char 	*buff;
 	
 	t_data.line = NULL;
+	//t_data.tmp = NULL;
 	t_data.read_return = 1;
+	i = 0;
+	buff = malloc(BUFFER_SIZE + 1);
 	while (t_data.read_return != 0)
 	{
-		t_data.read_return = read(fd, t_data.buff, BUFFER_SIZE);
-		t_data.buff[t_data.read_return] = '\0';
-		i = 0;
-		while (t_data.buff[i] && t_data.buff[i] != '\n')
-			i++;
-		if (rest != NULL)
+		t_data.line = ft_strjoin(t_data.line, buff);
+		if (buff[0] == 0)
 		{
-			t_data.line = ft_strdup(rest);
-			rest = NULL;
+			t_data.read_return = read(fd, buff, BUFFER_SIZE);
+			buff[t_data.read_return] = '\0';
 		}
-		if (t_data.line == NULL)
-			t_data.line = ft_strdup(t_data.buff);
 		else
 		{
-			t_data.line = ft_strjoin(t_data.line, ft_substr(t_data.buff, 0, i));
+			t_data.line = ft_strdup(buff);
+			buff[0] = 0;
 		}
-		if (t_data.buff[i] == '\n')
+		while (buff[i] != '\0' && buff[i] != '\n')
+			i++;
+		if (t_data.line == NULL)
 		{
-			rest = ft_strdup(ft_strchr(t_data.buff, '\n'));
-			//rest = NULL;
-			//free(rest);
-			return (t_data.line);
+			t_data.line = ft_substr(buff, 0, i);
 		}
+		i = 0;
+		//ft_memset(buff, '\0', i);
+		//buff = ft_strdup(ft_strchr(buff, '\n'));
+		//rest = ft_strdup(ft_substr(buff, i + 1, BUFFER_SIZE - i));
 	}
-	return (NULL);
+	return (t_data.line);
 }
 
 int	main(int ac, char **av)
@@ -117,14 +118,13 @@ int	main(int ac, char **av)
 	int i = atoi(av[1]);
 	int fd = open("a_lire", O_RDONLY);
 	char *fini;
-	while (i > 0 )
+	while (i > 0)
 	{
 		fini = get_next_line(fd);
 		printf("%s", fini);
 		free(fini);
 		i--;
 	}
-	
 	//printf("\n%d", fd);
 	close(fd);
 }
