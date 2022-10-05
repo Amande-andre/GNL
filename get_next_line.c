@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/08/02 05:46:53 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/05 16:28:19 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,19 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (str);
 }
 
+char	*new_line(char *buff, int i)
+{
+	char 	*tmp;
+	char	*line;
+
+	tmp = NULL;
+	line = NULL;
+	line = ft_substr(buff, 0, i);
+	//line = tmp;
+
+	return (line);
+}
+
 char	*get_next_line(int fd)
 {
 	int				i;
@@ -81,32 +94,30 @@ char	*get_next_line(int fd)
 	static	char 	*buff;
 	
 	t_data.line = NULL;
-	//t_data.tmp = NULL;
 	t_data.read_return = BUFFER_SIZE;
 	i = 0;
 	buff = malloc(BUFFER_SIZE + 1);
-	while (t_data.read_return == BUFFER_SIZE)
+	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
 	{
-		if (buff[0] == 0)
-		{
-			t_data.read_return = read(fd, buff, BUFFER_SIZE);
-			buff[t_data.read_return] = '\0';
-		}
+		t_data.read_return = read(fd, buff, BUFFER_SIZE);
 		while (buff[i] != '\0' && buff[i] != '\n')
 			i++;
-		if (buff)
+		t_data.tmp = ft_substr(buff, i, ft_strlen(buff));
+		buff[t_data.read_return + 1] = '\0';
+		if (!t_data.line)
+			t_data.line = ft_strdup(new_line(buff, i));
+		else if (t_data.line && t_data.tmp)
 		{
-			t_data.tmp = ft_substr(buff, 0, i);
 			t_data.line = ft_strjoin(t_data.line, buff);
-			buff[0] = 0;
 		}
-		if (t_data.line == NULL)
+		if (buff[i] == '\n')
 		{
-			t_data.line = ft_substr(buff, 0, i);
+			return (t_data.line);	
 		}
-		//ft_memset(buff, '\0', i);
-		//buff = ft_strdup(ft_strchr(buff, '\n'));
-		//rest = ft_strdup(ft_substr(buff, i + 1, BUFFER_SIZE - i));
+		//printf("buff==>%s\n", buff);
+		buff = t_data.tmp;
+		printf("==>%s\n", t_data.line);
+		i = 0;
 	}
 	return (t_data.line);
 }

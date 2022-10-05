@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 18:08:52 by anmande           #+#    #+#             */
-/*   Updated: 2022/08/02 05:22:58 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/03 17:38:45 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);
 char	*ft_strlcat(char *dst, const char *src, size_t size);
+char	*new_line(char *buff, int i);
 
 #endif
