@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/05 16:28:19 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/10 19:19:29 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,18 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*s;
 	size_t	lens1;
 	size_t	lens2;
 
-	if (!s1)
+	if (s1 == NULL && s2 == NULL)
 		return (NULL);
+	// if (s1 == NULL)
+	// 	return (s2);
+	if (s2 == NULL)
+		return (s1);
 	lens1 = ft_strlen(s1);
 	lens2 = ft_strlen(s2);
 	s = ft_calloc(sizeof(char), (lens1 + lens2) + 1);
@@ -46,10 +50,37 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ft_memcpy(s, s1, lens1);
 	ft_memcpy(s + lens1, s2, lens2);
 	s[ft_strlen(s)] = '\0';
+	free (s1);
 	return (s);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substrbuff(char *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	char	*str;
+
+	i = 0;
+	if (s == NULL)
+		return (NULL);
+	if (start > (unsigned int)ft_strlen(s))
+		return (str = ft_calloc(1, 1));
+	else if (len > (unsigned int)ft_strlen(s) - start)
+		str = ft_calloc(sizeof(char), (ft_strlen(s) - start) + 1);
+	else
+		str = ft_calloc(sizeof(char), (len) + 1);
+	if (!str)
+		return (NULL);
+	while (s[start] && i < len)
+	{
+		str[i] = s[start];
+		i++;
+		start++;
+	}
+	free (s);
+	return (str);
+}
+
+char	*ft_substr(const char *s, unsigned int start, size_t len)
 {
 	size_t	i;
 	char	*str;
@@ -74,19 +105,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (str);
 }
 
-char	*new_line(char *buff, int i)
-{
-	char 	*tmp;
-	char	*line;
-
-	tmp = NULL;
-	line = NULL;
-	line = ft_substr(buff, 0, i);
-	//line = tmp;
-
-	return (line);
-}
-
 char	*get_next_line(int fd)
 {
 	int				i;
@@ -96,28 +114,50 @@ char	*get_next_line(int fd)
 	t_data.line = NULL;
 	t_data.read_return = BUFFER_SIZE;
 	i = 0;
-	buff = malloc(BUFFER_SIZE + 1);
+	if (buff)
+	{
+		while (buff[i] != '\n' && buff[i] != '\0')
+		{
+			i++;
+			if (buff[i] == '\n')
+			{
+				t_data.tmp = ft_substr(buff, 0, i + 1);
+				buff = ft_substrbuff(buff, i + 1, ft_strlen(buff));
+				return (t_data.tmp);
+			}
+		}
+	}
+	t_data.line = ft_strjoin(t_data.line, buff);
+	buff = ft_calloc(BUFFER_SIZE + 1, 1);
 	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
 	{
 		t_data.read_return = read(fd, buff, BUFFER_SIZE);
-		while (buff[i] != '\0' && buff[i] != '\n')
-			i++;
-		t_data.tmp = ft_substr(buff, i, ft_strlen(buff));
-		buff[t_data.read_return + 1] = '\0';
-		if (!t_data.line)
-			t_data.line = ft_strdup(new_line(buff, i));
-		else if (t_data.line && t_data.tmp)
-		{
-			t_data.line = ft_strjoin(t_data.line, buff);
-		}
-		if (buff[i] == '\n')
-		{
-			return (t_data.line);	
-		}
-		//printf("buff==>%s\n", buff);
-		buff = t_data.tmp;
-		printf("==>%s\n", t_data.line);
+		if (t_data.read_return <= 0)
+			return free(buff), (NULL);
 		i = 0;
+		while (buff[i] != '\0' && buff[i] != '\n')
+		{
+			// printf("%d : %c \n", i, buff[i]);
+			i++;
+		}
+		//printf("===i===%d\n", i);
+		if (buff[i] == '\n')
+			t_data.tmp = ft_substr(buff, 0, i + 1);
+		else
+			t_data.tmp = ft_substr(buff, 0, i );
+		//printf("tmp===>%s\n", t_data.tmp);
+		if (buff[i] == '\n' || t_data.read_return < BUFFER_SIZE)
+		{
+			t_data.line = ft_strjoin(t_data.line, t_data.tmp);
+			buff = ft_substrbuff(buff, i + 1, ft_strlen(buff));
+			return (t_data.line);
+			free (t_data.tmp);
+		}
+		if (t_data.tmp && buff[i] != '\n')
+		{
+			t_data.line = ft_strjoin(t_data.line, t_data.tmp);
+			free (t_data.tmp);
+		}
 	}
 	return (t_data.line);
 }
@@ -131,7 +171,7 @@ int	main(int ac, char **av)
 	while (i > 0)
 	{
 		fini = get_next_line(fd);
-		printf("%s", fini);
+		printf("GNL_START===>%s", fini);
 		free(fini);
 		i--;
 	}
