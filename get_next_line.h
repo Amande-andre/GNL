@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 18:08:52 by anmande           #+#    #+#             */
-/*   Updated: 2022/07/22 05:47:15 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/11 17:56:53 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 
 typedef struct s_data
 {
-	char	buff[BUFFER_SIZE + 1];
 	char	*line;
 	char	*tmp;
+	char	*tmp2;
 	int		read_return;
 }	t_data;
 
@@ -31,11 +31,11 @@ size_t	ft_strlen(const char *s);
 char	*get_next_line(int fd);
 void	*ft_calloc(size_t nmemb, size_t size);
 void	*ft_memset(void *s, int c, size_t n);
-char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strjoin(char *s1, char *s2);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_substr(const char *s, unsigned int start, size_t len);
 char	*ft_strchr(const char *s, int c);
-char	*ft_strdup(const char *s);
-char	*ft_strlcat(char *dst, const char *src, size_t size);
+void	ft_newbuff(char *buff);
+void	ft_line(char *line, char *buff);
 
 #endif
