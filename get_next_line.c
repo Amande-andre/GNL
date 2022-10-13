@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/11 18:53:51 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/13 18:19:01 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*ft_strdup(const char *s)
 	i = 0;
 	if (s == NULL)
 		return (NULL);
-	cpy = (char *)ft_calloc((ft_strlen(s)), 1);
+	cpy = (char *)malloc((ft_strlen(s)) + 1);
 	if (cpy == NULL)
 		return (NULL);
 	while (s[i])
@@ -73,30 +73,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (s);
 }
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
-{
-	size_t	i;
-	char	*str;
-
-	i = 0;
-	if (s == NULL)
-		return (NULL);
-	if (start > (unsigned int)ft_strlen(s))
-		return (str = ft_calloc(1, 1));
-	else if (len > (unsigned int)ft_strlen(s) - start)
-		str = ft_calloc(sizeof(char), (ft_strlen(s) - start));
-	else
-		str = ft_calloc(sizeof(char), (len) + 1);
-	if (!str)
-		return (NULL);
-	while (s[start] && i < len)
-	{
-		str[i] = s[start];
-		i++;
-		start++;
-	}
-	return (str);
-}
 void	ft_line(char *line, char *buff)
 {
 	int 	j;
@@ -109,7 +85,6 @@ void	ft_line(char *line, char *buff)
 	}
 	line[j] = '\0';
 }
-
 
 void	ft_newbuff(char *buff)
 {
@@ -133,36 +108,16 @@ void	ft_newbuff(char *buff)
 
 char	*get_next_line(int fd)
 {
-	int				i;
 	struct			s_data t_data;
 	static	char 	buff[BUFFER_SIZE + 1];
 	char			line[BUFFER_SIZE + 1];
 
 	t_data.line = NULL;
 	t_data.read_return = BUFFER_SIZE;
-	i = 0;
-	if (ft_strlen(buff) < BUFFER_SIZE + 1)
-	{
-		t_data.line = ft_strjoin(t_data.line, buff);
-	}
-	ft_memset(line, '\0', BUFFER_SIZE + 1);
 	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
 	{
 		t_data.read_return = read(fd, buff, BUFFER_SIZE);
-		ft_line(line, buff);
-		t_data.line = ft_strjoin(t_data.line, line);
-		while (line[i] != '\n' && line[i] != '\0')
-		{
-			if (line[i] == '\n')
-			{
-				line[i + 1] = '\0';
-				return (t_data.line);
-			}
-			i++;
-		}
-		i = 0;
 	}
-	ft_newbuff(buff);
 	return (t_data.line);
 }
 
