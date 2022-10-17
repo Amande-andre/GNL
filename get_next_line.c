@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/13 18:19:01 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/17 11:07:01 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void	ft_line(char *line, char *buff)
 	int 	j;
 
 	j = 0;
+	ft_memset(line, '\0', BUFFER_SIZE + 1);
 	while (buff[j] && buff[j] != '\n')
 	{
 		line[j] = buff[j];
@@ -114,9 +115,23 @@ char	*get_next_line(int fd)
 
 	t_data.line = NULL;
 	t_data.read_return = BUFFER_SIZE;
-	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
+	ft_line(line, buff);
+	// printf("line===>%s\n", line);
+	// printf("buff===>%s\n", buff);
+	ft_newbuff(buff);
+	t_data.line = ft_strdup(line);
+	if (ft_strchr(t_data.line, '\n') == NULL)
 	{
-		t_data.read_return = read(fd, buff, BUFFER_SIZE);
+		while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
+		{
+			t_data.read_return = read(fd, buff, BUFFER_SIZE);
+			t_data.line = ft_strjoin(t_data.line, buff);
+			if (ft_strchr(line, '\n') != NULL)
+			{
+				printf("stop===========\n");
+				return (t_data.line);
+			}
+		}
 	}
 	return (t_data.line);
 }
@@ -125,14 +140,16 @@ int	main(int ac, char **av)
 {
 	(void)ac;
 	int i = atoi(av[1]);
+	int j = 1;
 	int fd = open("a_lire", O_RDONLY);
 	char *fini;
 	while (i > 0)
 	{
 		fini = get_next_line(fd);
-		printf("GNL_START===>%s\n", fini);
+		printf("GNL_START%d===>%s\n", j, fini);
 		free(fini);
 		i--;
+		j++;
 	}
 	//printf("\n%d", fd);
 	close(fd);
