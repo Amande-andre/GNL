@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
+/*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 18:08:52 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/13 12:30:31 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/24 19:34:04 by admin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_strjoin(char *s1, char *s2);
 void	*ft_memcpy(void *dest, char *src, size_t n);
 char	*ft_substr(const char *s, unsigned int start, size_t len);
 char	*ft_strchr(const char *s, int c);
-void	ft_newbuff(char *buff);
+void	ft_newbuff(char *buff, int read);
 void	ft_line(char *line, char *buff);
 
 #endif

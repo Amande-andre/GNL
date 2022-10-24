@@ -6,7 +6,7 @@
 /*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/24 19:20:53 by admin            ###   ########.fr       */
+/*   Updated: 2022/10/24 19:56:06 by admin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ char	*ft_strdup(const char *s)
 		cpy[i] = s[i];
 		i++;
 	}
+	cpy[i] = '\0';
 	return (cpy);
 }
 
@@ -69,7 +70,7 @@ void	ft_line(char *line, char *buff)
 	//line[j] = '\0';
 }
 
-void	ft_newbuff(char *buff)
+void	ft_newbuff(char *buff, int read)
 {
 	char	*tmpbuff;
 	int		j;
@@ -77,6 +78,7 @@ void	ft_newbuff(char *buff)
 
 	j = 0;
 	i = 0;
+	buff[read] = '\0';
 	tmpbuff = ft_strdup(buff);
 	while (buff[i] != '\n' && buff[i])
 		i++;
@@ -101,7 +103,6 @@ char	*get_next_line(int fd)
 	t_data.line = NULL;
 	t_data.read_return = BUFFER_SIZE;
 	ft_memset(line, '\0', BUFFER_SIZE + 1);
-	printf("buff===>%s\n", buff);
 	ft_line(line, buff);
 	t_data.line = ft_strjoin(t_data.line, line);
 	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
@@ -113,11 +114,7 @@ char	*get_next_line(int fd)
 		ft_line(line, buff);
 		t_data.line = ft_strjoin(t_data.line, line);
 	}
-	ft_newbuff(buff);
-	//printf("read===>%d\n", t_data.read_return);
-	//buff[ft_strlen(line)] = '\0';
-	// if (t_data.read_return != BUFFER_SIZE)
-	// 	t_data.line[ft_strlen(buff)] = '\0';
+	ft_newbuff(buff, t_data.read_return);
 	return (t_data.line);
 }
 
