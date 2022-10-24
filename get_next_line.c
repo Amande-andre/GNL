@@ -6,29 +6,11 @@
 /*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/12 18:21:12 by admin            ###   ########.fr       */
+/*   Updated: 2022/10/24 19:20:53 by admin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*ft_strchr(const char *s, int c)
-{
-	int		i;
-
-	i = 0;
-	if (c > 256)
-		c %= 256;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return ((char *)s + i);
-		i++;
-	}
-	if (s[i] == c && c == '\0')
-		return ((char *)s + i);
-	return (NULL);
-}
 
 char	*ft_strdup(const char *s)
 {
@@ -38,7 +20,7 @@ char	*ft_strdup(const char *s)
 	i = 0;
 	if (s == NULL)
 		return (NULL);
-	cpy = (char *)ft_calloc((ft_strlen(s)), 1);
+	cpy = (char *)malloc((ft_strlen(s)) + 1);
 	if (cpy == NULL)
 		return (NULL);
 	while (s[i])
@@ -69,47 +51,23 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(s, s1, lens1);
 	ft_memcpy(s + lens1, s2, lens2);
 	s[ft_strlen(s)] = '\0';
-	free (s1);
+	//free (s1);
 	return (s);
 }
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
-{
-	size_t	i;
-	char	*str;
-
-	i = 0;
-	if (s == NULL)
-		return (NULL);
-	if (start > (unsigned int)ft_strlen(s))
-		return (str = ft_calloc(1, 1));
-	else if (len > (unsigned int)ft_strlen(s) - start)
-		str = ft_calloc(sizeof(char), (ft_strlen(s) - start));
-	else
-		str = ft_calloc(sizeof(char), (len) + 1);
-	if (!str)
-		return (NULL);
-	while (s[start] && i < len)
-	{
-		str[i] = s[start];
-		i++;
-		start++;
-	}
-	return (str);
-}
 void	ft_line(char *line, char *buff)
 {
 	int 	j;
 
 	j = 0;
+	ft_memset(line, '\0', BUFFER_SIZE + 1);
 	while (buff[j] && buff[j] != '\n')
 	{
 		line[j] = buff[j];
 		j++;
 	}
-	line[j] = '\0';
+	//line[j] = '\0';
 }
-
 
 void	ft_newbuff(char *buff)
 {
@@ -122,47 +80,44 @@ void	ft_newbuff(char *buff)
 	tmpbuff = ft_strdup(buff);
 	while (buff[i] != '\n' && buff[i])
 		i++;
-	while (tmpbuff[i])
+	ft_memset(buff, '\0', BUFFER_SIZE);
+	printf("buff=====>%s\n", buff);
+	while (tmpbuff[i] != '\0')
 	{
 		i++;
 		buff[j] = tmpbuff[i];
 		j++;
 	}
+	buff[i] = '\0';
 	free (tmpbuff);
 }
 
 char	*get_next_line(int fd)
 {
-	int				i;
 	struct			s_data t_data;
 	static	char 	buff[BUFFER_SIZE + 1];
 	char			line[BUFFER_SIZE + 1];
 
 	t_data.line = NULL;
 	t_data.read_return = BUFFER_SIZE;
-	i = 0;
-	if (ft_strlen(buff) < BUFFER_SIZE + 1)
-	{
-		t_data.line = ft_strjoin(t_data.line, buff);
-	}
 	ft_memset(line, '\0', BUFFER_SIZE + 1);
+	printf("buff===>%s\n", buff);
+	ft_line(line, buff);
+	t_data.line = ft_strjoin(t_data.line, line);
 	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
 	{
 		t_data.read_return = read(fd, buff, BUFFER_SIZE);
+		if (buff[0] == '\0' && t_data.read_return == 0)
+			return (NULL);
+		buff[t_data.read_return] = '\0';
 		ft_line(line, buff);
 		t_data.line = ft_strjoin(t_data.line, line);
-		while (line[i] != '\n' && line[i] != '\0')
-		{
-			if (line[i] == '\n')
-			{
-				line[i + 1] = '\0';
-				return (t_data.line);
-			}
-			i++;
-		}
-		i = 0;
 	}
 	ft_newbuff(buff);
+	//printf("read===>%d\n", t_data.read_return);
+	//buff[ft_strlen(line)] = '\0';
+	// if (t_data.read_return != BUFFER_SIZE)
+	// 	t_data.line[ft_strlen(buff)] = '\0';
 	return (t_data.line);
 }
 
@@ -170,14 +125,16 @@ int	main(int ac, char **av)
 {
 	(void)ac;
 	int i = atoi(av[1]);
+	int j = 1;
 	int fd = open("a_lire", O_RDONLY);
 	char *fini;
 	while (i > 0)
 	{
 		fini = get_next_line(fd);
-		printf("GNL_START===>%s\n", fini);
+		printf("GNL_START%d===>%s\n", j, fini);
 		free(fini);
 		i--;
+		j++;
 	}
 	//printf("\n%d", fd);
 	close(fd);
