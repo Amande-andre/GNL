@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: admin <admin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/24 19:56:06 by admin            ###   ########.fr       */
+/*   Updated: 2022/10/25 15:23:02 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,11 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	if (s1 == NULL && s2 == NULL)
 		return (NULL);
-	// if (s1 == NULL)
-	// 	return (s2);
-	if (s2 == NULL)
-		return (s1);
+	// if (s2 == NULL)
+	// {
+	// 	free (s2);
+	// 	return (NULL);
+	// }
 	lens1 = ft_strlen(s1);
 	lens2 = ft_strlen(s2);
 	s = ft_calloc(sizeof(char), (lens1 + lens2) + 1);
@@ -52,7 +53,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(s, s1, lens1);
 	ft_memcpy(s + lens1, s2, lens2);
 	s[ft_strlen(s)] = '\0';
-	//free (s1);
+	free (s1);
 	return (s);
 }
 
@@ -62,7 +63,7 @@ void	ft_line(char *line, char *buff)
 
 	j = 0;
 	ft_memset(line, '\0', BUFFER_SIZE + 1);
-	while (buff[j] && buff[j] != '\n')
+	while (buff[j] && buff[j - 1] != '\n')
 	{
 		line[j] = buff[j];
 		j++;
@@ -83,7 +84,6 @@ void	ft_newbuff(char *buff, int read)
 	while (buff[i] != '\n' && buff[i])
 		i++;
 	ft_memset(buff, '\0', BUFFER_SIZE);
-	printf("buff=====>%s\n", buff);
 	while (tmpbuff[i] != '\0')
 	{
 		i++;
@@ -108,8 +108,11 @@ char	*get_next_line(int fd)
 	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
 	{
 		t_data.read_return = read(fd, buff, BUFFER_SIZE);
-		if (buff[0] == '\0' && t_data.read_return == 0)
+		if ((buff[0] == '\0' && t_data.read_return <= 0) || fd > 1024 || BUFFER_SIZE == 0)
+		{
+			free (t_data.line);
 			return (NULL);
+		}
 		buff[t_data.read_return] = '\0';
 		ft_line(line, buff);
 		t_data.line = ft_strjoin(t_data.line, line);
@@ -118,21 +121,21 @@ char	*get_next_line(int fd)
 	return (t_data.line);
 }
 
-int	main(int ac, char **av)
-{
-	(void)ac;
-	int i = atoi(av[1]);
-	int j = 1;
-	int fd = open("a_lire", O_RDONLY);
-	char *fini;
-	while (i > 0)
-	{
-		fini = get_next_line(fd);
-		printf("GNL_START%d===>%s\n", j, fini);
-		free(fini);
-		i--;
-		j++;
-	}
-	//printf("\n%d", fd);
-	close(fd);
-}
+// int	main(int ac, char **av)
+// {
+// 	(void)ac;
+// 	int i = atoi(av[1]);
+// 	int j = 1;
+// 	int fd = open("a_lire", O_RDONLY);
+// 	char *fini;
+// 	while (i > 0)
+// 	{
+// 		fini = get_next_line(fd);
+// 		printf("GNL_START%d===>%s\n", j, fini);
+// 		free(fini);
+// 		i--;
+// 		j++;
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
