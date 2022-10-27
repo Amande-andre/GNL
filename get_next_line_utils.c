@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 22:54:50 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/25 14:27:58 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/25 15:31:01 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	*ft_memset(void *s, int c, size_t n)
 
 	i = 0;
 	p = s;
-	while (i < n )
+	while (i < n)
 	{
 		p[i] = c;
 		i++;

@@ -6,7 +6,7 @@
 /*   By: anmande <anmande@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 16:04:05 by anmande           #+#    #+#             */
-/*   Updated: 2022/10/25 15:23:02 by anmande          ###   ########.fr       */
+/*   Updated: 2022/10/25 15:31:17 by anmande          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,6 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	if (s1 == NULL && s2 == NULL)
 		return (NULL);
-	// if (s2 == NULL)
-	// {
-	// 	free (s2);
-	// 	return (NULL);
-	// }
 	lens1 = ft_strlen(s1);
 	lens2 = ft_strlen(s2);
 	s = ft_calloc(sizeof(char), (lens1 + lens2) + 1);
@@ -59,7 +54,7 @@ char	*ft_strjoin(char *s1, char *s2)
 
 void	ft_line(char *line, char *buff)
 {
-	int 	j;
+	int	j;
 
 	j = 0;
 	ft_memset(line, '\0', BUFFER_SIZE + 1);
@@ -68,7 +63,6 @@ void	ft_line(char *line, char *buff)
 		line[j] = buff[j];
 		j++;
 	}
-	//line[j] = '\0';
 }
 
 void	ft_newbuff(char *buff, int read)
@@ -96,8 +90,8 @@ void	ft_newbuff(char *buff, int read)
 
 char	*get_next_line(int fd)
 {
-	struct			s_data t_data;
-	static	char 	buff[BUFFER_SIZE + 1];
+	static char		buff[BUFFER_SIZE + 1];
+	struct s_data	t_data;
 	char			line[BUFFER_SIZE + 1];
 
 	t_data.line = NULL;
@@ -108,7 +102,8 @@ char	*get_next_line(int fd)
 	while (t_data.read_return > 0 && ft_strchr(buff, '\n') == NULL)
 	{
 		t_data.read_return = read(fd, buff, BUFFER_SIZE);
-		if ((buff[0] == '\0' && t_data.read_return <= 0) || fd > 1024 || BUFFER_SIZE == 0)
+		if ((buff[0] == '\0' && t_data.read_return <= 0)
+			|| fd > 1024 || BUFFER_SIZE == 0)
 		{
 			free (t_data.line);
 			return (NULL);
